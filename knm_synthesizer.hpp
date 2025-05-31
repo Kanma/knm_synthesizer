@@ -1,4 +1,4 @@
-/** knm::synthesizer - v1.0.0 - MIT License
+/** knm::synthesizer - v1.0.1 - MIT License
 
 DESCRIPTION
 
@@ -119,7 +119,7 @@ LICENSE
 
 #define KNM_SYNTHESIZER_VERSION_MAJOR 1
 #define KNM_SYNTHESIZER_VERSION_MINOR 0
-#define KNM_SYNTHESIZER_VERSION_PATCH 0
+#define KNM_SYNTHESIZER_VERSION_PATCH 1
 
 
 namespace knm {
