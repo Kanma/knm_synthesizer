@@ -701,12 +701,12 @@ namespace synth {
         void allNotesOff(uint8_t channel, bool immediate);
 
         //--------------------------------------------------------------------------------
-        /// @brief  Reset the value of all the MIDI controllers of a specific channel
+        /// @brief  Reset the value of all the MIDI controllers
         //--------------------------------------------------------------------------------
         void resetAllControllers();
 
         //--------------------------------------------------------------------------------
-        /// @brief  Reset the value of all the MIDI controllers
+        /// @brief  Reset the value of all the MIDI controllers of a specific channel
         ///
         /// @param channel  The channel
         //--------------------------------------------------------------------------------

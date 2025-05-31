@@ -1,4 +1,4 @@
-/** knm::soundfont - v1.1.0 - MIT License
+/** knm::soundfont - v1.1.1 - MIT License
 
 DESCRIPTION
 
@@ -110,13 +110,14 @@ LICENSE
 
 #ifdef KNM_SOUNDFONT_IMPLEMENTATION
     #include <fstream>
-    #include <sstream>
+    #include <streambuf>
+    #include <string>
 #endif
 
 
 #define KNM_SOUNDFONT_VERSION_MAJOR 1
 #define KNM_SOUNDFONT_VERSION_MINOR 1
-#define KNM_SOUNDFONT_VERSION_PATCH 0
+#define KNM_SOUNDFONT_VERSION_PATCH 1
 
 
 namespace knm {
@@ -1208,17 +1209,43 @@ namespace sf {
 
     //-----------------------------------------------------------------------
 
+    struct membuf : std::streambuf
+    {
+        membuf(char* begin, size_t size)
+        {
+            this->setg(begin, begin, begin + size);
+        }
+
+        pos_type seekoff(
+            off_type off, std::ios_base::seekdir dir,
+            std::ios_base::openmode which = std::ios_base::in
+        ) override
+        {
+            if (dir == std::ios_base::cur)
+                gbump(off);
+            else if (dir == std::ios_base::end)
+                setg(eback(), egptr() + off, egptr());
+            else if (dir == std::ios_base::beg)
+                setg(eback(), eback() + off, egptr());
+            return gptr() - eback();
+        }
+
+        pos_type seekpos(pos_type sp, std::ios_base::openmode which) override
+        {
+            return seekoff(sp - pos_type(off_type(0)), std::ios_base::beg, which);
+        }
+    };
+
     bool SoundFont::load(const char* buffer, size_t size)
     {
         // Cleanup (just in case)
         cleanup();
 
-        // Create a string buffer around the provided buffer
-        std::stringbuf sbuf(std::ios::in);
-        sbuf.pubsetbuf(const_cast<char*>(buffer), size);
+        // Create a memory buffer around the provided buffer
+        membuf memory_buffer(const_cast<char*>(buffer), size);
 
         // Create an input stream from the string buffer
-        std::istream stream(&sbuf);
+        std::istream stream(&memory_buffer);
 
         // Parse the soundfont
         return load(stream);
